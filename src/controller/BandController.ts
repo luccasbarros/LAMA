@@ -9,12 +9,15 @@ class UserController {
     public createBand = async (req:Request, res:Response) => {
 
         try {
+
+            const token:string = req.headers.authorization as string
+
             const input:BandInputDTO = {
                 name: req.body.name,
                 genre: req.body.genre,
                 responsible: req.body.password 
             }
-            const token = await BandBusiness.createBand(input)
+            await BandBusiness.createBand(input, token)
 
             res.status(201).send({message: 'User created sucessfully', token})
 
