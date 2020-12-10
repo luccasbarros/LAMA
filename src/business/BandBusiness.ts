@@ -11,7 +11,6 @@ class BandBusiness {
   ): Promise<any> => {
 
     try {
-
       const authentication: AuthenticationData = Authenticator.getData(token);
 
       if (!authentication) {
@@ -19,9 +18,8 @@ class BandBusiness {
       }
 
       if (authentication.role === "ADMIN") {
-
         if (!input.name || !input.musicGenre || !input.responsible) {
-          throw new CustomError(400, "Preencha os campos corretamente")
+          throw new CustomError(400, "Complete all fields correctly")
         }
 
         const id: string = IdGenerator.generate();
@@ -40,7 +38,6 @@ class BandBusiness {
       }
 
     } catch (error) {
-
       let{message} = error
 
       if(message.includes("Duplicate Entry")) {
@@ -54,6 +51,35 @@ class BandBusiness {
       throw new CustomError(400, error.sqlMessage || error.message)
     }
   };
+  public getBandById = async(input:any, token:string):Promise<any> => {
+    try {
+      const authentication:AuthenticationData = Authenticator.getData(token)
+
+      if(!authentication) {
+        throw new CustomError(401, "Unauthorized")
+      }
+      
+      const band:Band = await BandDatabase.getBandById(input.id)
+
+      if(!band) {
+        throw new CustomError(404, "Band not found")
+      }
+
+      return band
+      
+    } catch(error) {
+
+      let {message} = error
+
+      if(message === "jwt must be provided") {
+        throw new CustomError(401, "Unauthorized")
+      }
+
+      if(message === "jwt expired") {
+        throw new CustomError(400, "You must to be logged")
+      }
+    }
+  }
 }
 
 export default new BandBusiness();
