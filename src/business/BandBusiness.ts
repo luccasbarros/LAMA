@@ -9,32 +9,49 @@ class BandBusiness {
     input: BandInputDTO,
     token: string
   ): Promise<any> => {
+
     try {
+
       const authentication: AuthenticationData = Authenticator.getData(token);
 
-      if (!authentication.id) {
+      if (!authentication) {
         throw new CustomError(401, "Unauthorized");
       }
 
       if (authentication.role === "ADMIN") {
-        if (!input.name || !input.genre || !input.responsible) {
-          throw new Error("Invalid fields. Complete all fields");
+
+        if (!input.name || !input.musicGenre || !input.responsible) {
+          throw new CustomError(400, "Preencha os campos corretamente")
         }
+
         const id: string = IdGenerator.generate();
 
         const newBand: Band = new Band(
           id,
           input.name,
-          input.genre,
+          input.musicGenre,
           input.responsible
         );
 
         await BandDatabase.createBand(newBand);
+
       } else {
         throw new CustomError(401, "Unauthorized");
       }
+
     } catch (error) {
-      throw new Error(error.sqlMessage || error.message);
+
+      let{message} = error
+
+      if(message.includes("Duplicate Entry")) {
+        throw new CustomError(400, "User already exists")
+      }
+
+      if(message === "jwt must be provided") {
+        throw new CustomError(401, "Unauthorized")
+      }
+
+      throw new CustomError(400, error.sqlMessage || error.message)
     }
   };
 }

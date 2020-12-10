@@ -9,23 +9,20 @@ class UserController {
 
       const input: BandInputDTO = {
         name: req.body.name,
-        genre: req.body.genre,
-        responsible: req.body.password,
+        musicGenre: req.body.musicGenre,
+        responsible: req.body.responsible,
       };
+      
       await BandBusiness.createBand(input, token);
 
-      res.status(201).send({ message: "User created sucessfully", token });
-    } catch (error) {
-      let { message } = error;
+      res.status(201).send({ message: "Band created sucessfully"});
 
-      if (message.includes("Duplicate entry")) {
-        res.statusCode = 400;
-        message = "User already exists";
-      }
+    } catch (error) {
 
       res.status(400).send({
         message: error.message || error.sqlMessage,
       });
+
     }
   };
 }

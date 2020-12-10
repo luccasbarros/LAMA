@@ -10,8 +10,8 @@ class BandDatabase extends BaseDatabase {
         .insert({
           id: band.getId(),
           name: band.getName(),
-          genre: band.getGenre(),
-          responsible: band.getResponsible(),
+          music_genre: band.getGenre(),
+          responsible: band.getResponsible()
         })
         .into(BandDatabase.tableName);
     } catch (error) {
