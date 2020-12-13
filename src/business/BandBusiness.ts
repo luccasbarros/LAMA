@@ -60,15 +60,9 @@ class BandBusiness {
       }
       
       const band:Band = await BandDatabase.getBandById(input.id)
-
-      if(!band) {
-        throw new CustomError(404, "Band not found")
-      }
-
       return band
-      
-    } catch(error) {
 
+    } catch(error) {
       let {message} = error
 
       if(message === "jwt must be provided") {

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { BandInputDTO } from "../model/Band";
+import { Band, BandInputDTO } from "../model/Band";
 import BandBusiness from "../business/BandBusiness";
 import BandDatabase from "../data/BandDatabase";
+import { CustomError } from "../error/CustomError";
 
 class UserController {
   public createBand = async (req: Request, res: Response) => {
@@ -34,11 +35,15 @@ class UserController {
         id: req.params.id
       }
 
-      const band = await BandBusiness.getBandById(input, token)
+      const band:Band = await BandBusiness.getBandById(input, token)
+
+      if(!band) {
+        throw new CustomError(404, 'Not found')
+      }
 
       res.status(200).send({band: band})
+      
     } catch(error) {
-
       res.status(400).send({message: error.message || error.sqlMessage})
     }
   }
