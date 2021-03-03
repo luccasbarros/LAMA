@@ -35,10 +35,7 @@ class Authenticator {
     }
 
 
-    return {
-      id: result.id,
-      role: result.role
-    }
+    return result
   }
 
 }
